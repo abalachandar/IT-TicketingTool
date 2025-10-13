@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Assigned Tickets</h2>
+<table>
+  <tr><th>ID</th><th>Subject</th><th>Priority</th><th>Status</th><th>Actions</th></tr>
+  {% for t in tickets %}
+    <tr>
+      <td>{{ t.id }}</td>
+      <td>{{ t.subject }}</td>
+      <td>{{ t.priority }}</td>
+      <td>{{ t.status }}</td>
+      <td>
+        <a href="{{ url_for('view_ticket', ticket_id=t.id) }}">View</a>
+        <form style="display:inline" method="post" action="{{ url_for('resolve_ticket', ticket_id=t.id) }}">
+          <button type="submit">Resolve</button>
+        </form>
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="5">No tickets</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}
+

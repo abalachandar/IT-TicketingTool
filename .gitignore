@@ -1,0 +1,9 @@
+# Ignore Python cache & compiled files
+__pycache__/
+*.pyc
+
+# Ignore venv (we'll reinstall dependencies with requirements.txt)
+venv/
+
+# Ignore OS files
+.DS_Store

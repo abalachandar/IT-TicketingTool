@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Ticket {{ ticket.id }}</h2>
+<p><strong>Subject:</strong> {{ ticket.subject }}</p>
+<p><strong>Description:</strong><br>{{ ticket.description|nl2br }}</p>
+<p><strong>Category:</strong> {{ ticket.category }}</p>
+<p><strong>Priority:</strong> {{ ticket.priority }}</p>
+<p><strong>Status:</strong> {{ ticket.status }}</p>
+{% if current_user.role in ['agent','supervisor'] or current_user.id == ticket.user_id %}
+  <form method="post" action="{{ url_for('resolve_ticket', ticket_id=ticket.id) }}">
+    <button type="submit">Resolve</button>
+  </form>
+{% endif %}
+{% endblock %}
+

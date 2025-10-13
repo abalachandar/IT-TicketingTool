@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Admin / Supervisor</h2>
+<h3>All Tickets</h3>
+<table>
+  <tr><th>ID</th><th>Subject</th><th>User</th><th>Assigned To</th><th>Status</th></tr>
+  {% for t in tickets %}
+    <tr>
+      <td>{{ t.id }}</td>
+      <td>{{ t.subject }}</td>
+      <td>{{ t.user_id }}</td>
+      <td>{{ t.assigned_to }}</td>
+      <td>{{ t.status }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="5">No tickets</td></tr>
+  {% endfor %}
+</table>
+<h3>Users</h3>
+<ul>
+  {% for u in users %}
+    <li>{{ u.id }} - {{ u.name }} ({{ u.role }}) - {{ u.department }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}
+
