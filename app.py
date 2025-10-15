@@ -16,7 +16,7 @@ load_dotenv()
 app = Flask(__name__)
 # Config
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'ticketing.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret')
 

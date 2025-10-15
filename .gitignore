@@ -1,9 +1,17 @@
-# Ignore Python cache & compiled files
+# Environment files
+.env
+
+# Python cache
 __pycache__/
 *.pyc
 
-# Ignore venv (we'll reinstall dependencies with requirements.txt)
+# Virtual environment
 venv/
+ENV/
 
-# Ignore OS files
+# SQLite leftovers
+*.db
+
+# System files
 .DS_Store
+
