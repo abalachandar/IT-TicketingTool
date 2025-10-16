@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Your Tickets</h2>
+<h2>Support Dashboard</h2>
 
 {% if tickets %}
-  <table class="table table-striped">
+  <table class="table table-bordered table-striped">
     <thead>
       <tr>
         <th>ID</th>
@@ -11,6 +11,7 @@
         <th>Category</th>
         <th>Priority</th>
         <th>Status</th>
+        <th>User ID</th>
         <th>Created</th>
         <th>Actions</th>
       </tr>
@@ -23,18 +24,18 @@
         <td>{{ ticket.category }}</td>
         <td>{{ ticket.priority }}</td>
         <td>{{ ticket.status }}</td>
+        <td>{{ ticket.user_id }}</td>
         <td>{{ ticket.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
         <td>
           <a href="{{ url_for('view_ticket', ticket_id=ticket.id) }}" class="btn btn-sm btn-info">View</a>
+          <a href="{{ url_for('update_ticket', ticket_id=ticket.id) }}" class="btn btn-sm btn-warning">Update</a>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 {% else %}
-  <p>No tickets yet.</p>
+  <p>No assigned tickets yet.</p>
 {% endif %}
-
-<a href="{{ url_for('create_ticket') }}" class="btn btn-primary">Create New Ticket</a>
 {% endblock %}
 

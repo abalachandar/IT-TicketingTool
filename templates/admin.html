@@ -1,26 +1,99 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h2>Admin / Supervisor</h2>
+<h2>Admin / Supervisor Dashboard</h2>
+
+<!-- All Tickets -->
 <h3>All Tickets</h3>
-<table>
-  <tr><th>ID</th><th>Subject</th><th>User</th><th>Assigned To</th><th>Status</th></tr>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Subject</th>
+      <th>Submitted By</th>
+      <th>Assigned To</th>
+      <th>Priority</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
   {% for t in tickets %}
     <tr>
       <td>{{ t.id }}</td>
       <td>{{ t.subject }}</td>
-      <td>{{ t.user_id }}</td>
-      <td>{{ t.assigned_to }}</td>
+      <td>
+        {% if users_map and t.user_id in users_map %}
+          {{ users_map[t.user_id] }} ({{ t.user_id }})
+        {% else %}
+          {{ t.user_id }}
+        {% endif %}
+      </td>
+      <td>
+        {% if t.assigned_to %}
+          {% if users_map and t.assigned_to in users_map %}
+            {{ users_map[t.assigned_to] }} ({{ t.assigned_to }})
+          {% else %}
+            {{ t.assigned_to }}
+          {% endif %}
+          {% if current_user.role == 'admin' %}
+            (&nbsp;<a href="{{ url_for('assign_ticket', ticket_id=t.id) }}">Manage</a>&nbsp;)
+          {% endif %}
+        {% else %}
+          {% if current_user.role == 'admin' %}
+            <a href="{{ url_for('assign_ticket', ticket_id=t.id) }}">Unassigned (Assign)</a>
+          {% else %}
+            Unassigned
+          {% endif %}
+        {% endif %}
+      </td>
+      <td>{{ t.priority }}</td>
       <td>{{ t.status }}</td>
+      <td>
+       {% if current_user.role == 'admin' %}
+          <form style="display:inline" method="post" action="{{ url_for('resolve_ticket', ticket_id=t.id) }}">
+            <button type="submit" class="btn btn-sm btn-success">Resolve</button>
+          </form>
+        {% endif %}
+      </td>
     </tr>
   {% else %}
-    <tr><td colspan="5">No tickets</td></tr>
+    <tr><td colspan="7">No tickets found.</td></tr>
   {% endfor %}
+  </tbody>
 </table>
-<h3>Users</h3>
-<ul>
+
+<hr>
+
+<!-- Users Table -->
+<h3>All Users</h3>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>User ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Role</th>
+      <th>Department</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
   {% for u in users %}
-    <li>{{ u.id }} - {{ u.name }} ({{ u.role }}) - {{ u.department }}</li>
+    <tr>
+      <td>{{ u.id }}</td>
+      <td>{{ u.name }}</td>
+      <td>{{ u.email }}</td>
+      <td>{{ u.role }}</td>
+      <td>{{ u.department }}</td>
+      <td>
+             </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6">No users found.</td></tr>
   {% endfor %}
-</ul>
+  </tbody>
+</table>
+
 {% endblock %}
 

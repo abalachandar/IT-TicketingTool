@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Update Ticket {{ ticket.id }}</h2>
+
+<form method="POST">
+
+  <!-- Ticket Status -->
+  <label for="status">Status:</label>
+  <select name="status" id="status" class="form-control">
+    <option value="Open" {% if ticket.status == 'Open' %}selected{% endif %}>Open</option>
+    <option value="In Progress" {% if ticket.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+    <option value="Resolved" {% if ticket.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+    <option value="Closed" {% if ticket.status == 'Closed' %}selected{% endif %}>Closed</option>
+  </select><br>
+
+  <!-- Priority -->
+  <label for="priority">Priority:</label>
+  <select name="priority" id="priority" class="form-control">
+    <option value="P1" {% if ticket.priority == 'P1' %}selected{% endif %}>P1 - Critical</option>
+    <option value="P2" {% if ticket.priority == 'P2' %}selected{% endif %}>P2 - High</option>
+    <option value="P3" {% if ticket.priority == 'P3' %}selected{% endif %}>P3 - Medium</option>
+    <option value="P4" {% if ticket.priority == 'P4' %}selected{% endif %}>P4 - Low</option>
+  </select><br>
+
+  <!-- Admin-only: Assign Ticket -->
+  {% if current_user.role == 'admin' %}
+    <label for="assigned_team">Assign to Team:</label>
+    <select name="assigned_team" id="assigned_team" class="form-control">
+      <option value="">-- Keep Current --</option>
+      <option value="L1" {% if ticket.assigned_to == 'L1' %}selected{% endif %}>L1 Support</option>
+      <option value="L2" {% if ticket.assigned_to == 'L2' %}selected{% endif %}>L2 Support</option>
+    </select><br>
+
+    <!-- Hyperlink to full assignment page -->
+    <a href="{{ url_for('assign_ticket', ticket_id=ticket.id) }}" class="btn btn-link">
+      Manage Assignment →
+    </a><br>
+  {% endif %}
+
+  <!-- Response section (Support + Admin only) -->
+  {% if current_user.role in ['support', 'admin'] %}
+    <label for="response">Response / Notes:</label>
+    <textarea name="response" id="response" class="form-control" rows="4" placeholder="Add update or resolution notes..."></textarea><br>
+  {% endif %}
+
+  <button type="submit" class="btn btn-primary">Update Ticket</button>
+</form>
+
+{% endblock %}
+
