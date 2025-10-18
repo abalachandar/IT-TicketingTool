@@ -9,6 +9,7 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from collections import Counter
 
 # Load environment
 load_dotenv()
@@ -199,6 +200,12 @@ def check_escalation():
 
 # Routes
 
+# Custom Jinja filter to convert newlines to <br> tags
+@app.template_filter('nl2br')
+def nl2br(value):
+    if not value:
+        return ""
+    return value.replace('\n', '<br>')
 
 @app.route('/')
 def index():
@@ -243,7 +250,6 @@ def login():
         flash('Invalid credentials')
     return render_template('login.html')
 
-
 @app.route('/logout')
 @login_required
 def logout():
@@ -253,17 +259,37 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    # Select tickets based on role
     if current_user.role == 'support':
         tickets = Ticket.query.filter_by(assigned_to=current_user.id).all()
-        return render_template('support_dashboard.html', tickets=tickets)
+        template = 'support_dashboard.html'
     elif current_user.role == 'admin':
         tickets = Ticket.query.all()
-        users = User.query.all()
-        users_map = {u.id: u.name for u in users}
-        return render_template('admin.html', tickets=tickets, users=users, users_map=users_map)
+        template = 'admin.html'
     else:
         tickets = Ticket.query.filter_by(user_id=current_user.id).all()
-        return render_template('user_dashboard.html', tickets=tickets)
+        template = 'user_dashboard.html'
+
+    # ✅ Simplified status categories
+    status_labels = ['Open', 'In Progress', 'Escalated', 'Closed']
+    status_counts = [
+        Ticket.query.filter(Ticket.status.in_(['New', 'Open'])).count(),
+        Ticket.query.filter_by(status='In Progress').count(),
+        Ticket.query.filter_by(status='Escalated').count(),
+        Ticket.query.filter(Ticket.status.in_(['Resolved', 'Closed'])).count()
+    ]
+
+    users = User.query.all()
+    users_map = {u.id: u.name for u in users}
+
+    return render_template(
+        template,
+        tickets=tickets,
+        users=users,
+        users_map=users_map,
+        status_labels=status_labels,
+        status_counts=status_counts
+    )
 
 
 @app.route('/create_ticket', methods=['GET', 'POST'])

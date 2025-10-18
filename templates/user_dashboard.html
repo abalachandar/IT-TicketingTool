@@ -2,6 +2,43 @@
 {% block content %}
 <h2>Your Tickets</h2>
 
+<h3>Ticket Overview</h3>
+<div style="width: 600px; height: 600px; margin: 0 auto;">
+  <canvas id="ticketChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('ticketChart').getContext('2d');
+new Chart(ctx, {
+  type: 'pie',
+  data: {
+    labels: {{ status_labels|tojson }},
+    datasets: [{
+      label: 'Tickets by Status',
+      data: {{ status_counts|tojson }},
+      backgroundColor: ['#36A2EB', '#FFCE56', '#FF6384', '#4BC0C0'],
+      borderColor: '#fff',
+      borderWidth: 2
+    }]
+  },
+  options: {
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { font: { size: 16 } }
+      },
+      title: {
+        display: true,
+        text: 'Ticket Status Distribution',
+        font: { size: 20 }
+      }
+    }
+  }
+});
+</script>
+
+
 {% if tickets %}
   <table class="table table-striped">
     <thead>
