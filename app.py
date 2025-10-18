@@ -425,33 +425,28 @@ def update_ticket(ticket_id):
 
     return render_template('update_ticket.html', ticket=ticket)
 
-@app.route('/assign_ticket/<ticket_id>', methods=['GET','POST'])
+@app.route('/assign_ticket/<ticket_id>', methods=['GET', 'POST'])
 @login_required
 def assign_ticket(ticket_id):
-    # Only admins are allowed
     if current_user.role != 'admin':
-        flash('Access denied: only admins can assign tickets.')
+        flash("Access denied: only admins can assign tickets.", "danger")
         return redirect(url_for('dashboard'))
 
     ticket = Ticket.query.get_or_404(ticket_id)
+    users = User.query.all()
 
     if request.method == 'POST':
-        new_team = request.form.get('assigned_team')
-
-        # Assign based on team selection
-        if new_team == 'L1':
-            ticket.assigned_to = os.getenv('L1_TEAM')
-        elif new_team == 'L2':
-            ticket.assigned_to = os.getenv('L2_TEAM')
+        assigned_email = request.form.get('assigned_to')
+        user = User.query.filter_by(email=assigned_email).first()
+        if user:
+            ticket.assigned_to = user.id   # ✅ store user.id, not email
+            db.session.commit()
+            flash(f"Ticket {ticket.id} assigned to {user.email}.", "success")
+            return redirect(url_for('view_ticket', ticket_id=ticket.id))
         else:
-            ticket.assigned_to = None
+            flash("User not found.", "danger")
 
-        db.session.commit()
-
-        flash(f"Ticket {ticket.id} assigned successfully.", "success")
-        return redirect(url_for('view_ticket', ticket_id=ticket_id))
-
-    return render_template('assign_ticket.html', ticket=ticket)
+    return render_template('assign_ticket.html', ticket=ticket, users=users)
 
 
 if __name__ == '__main__':

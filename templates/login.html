@@ -1,10 +1,41 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Login</h2>
-<form method="post">
-  <label>Email: <input name="email" required></label><br>
-  <label>Password: <input name="password" type="password" required></label><br>
-  <button type="submit">Login</button>
-</form>
+<div class="d-flex flex-column align-items-center justify-content-center vh-100">
+  <div class="text-center mb-4">
+    <h1 class="display-4 fw-bold text-primary">Jupiter Brothers</h1>
+    <p class="text-muted">IT Support Ticketing System</p>
+  </div>
+
+  <div class="card shadow-lg p-4" style="width: 400px; border-radius: 15px;">
+    <h4 class="text-center mb-3">Login</h4>
+
+    {% if error %}
+      <div class="alert alert-danger text-center">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('login') }}">
+      <div class="mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" name="email" id="email" class="form-control" required placeholder="Enter your email">
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" name="password" id="password" class="form-control" required placeholder="Enter your password">
+      </div>
+
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
+      </div>
+    </form>
+
+    <hr class="my-4">
+
+    <p class="text-center text-muted mb-0">
+      Don’t have an account?
+      <a href="{{ url_for('register') }}" class="text-decoration-none">Register here</a>
+    </p>
+  </div>
+</div>
 {% endblock %}
 

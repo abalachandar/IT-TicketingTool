@@ -7,15 +7,16 @@
   <p><strong>Priority:</strong> {{ ticket.priority }}</p>
   <p><strong>Status:</strong> {{ ticket.status }}</p>
 
-  <form method="POST">
-    <label for="assigned_team">Assign to Team:</label>
-    <select name="assigned_team" id="assigned_team" class="form-control">
-      <option value="">-- Select Team --</option>
-      <option value="L1">L1 Team</option>
-      <option value="L2">L2 Team</option>
-    </select>
-    <button type="submit" class="btn btn-primary mt-3">Assign</button>
-  </form>
+<form method="POST">
+  <label for="assigned_to">Assign to:</label>
+  <select name="assigned_to" id="assigned_to" class="form-control">
+    {% for user in users %}
+      <option value="{{ user.email }}">{{ user.email }} ({{ user.role }})</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="btn btn-primary mt-3">Assign</button>
+</form>
+
 
   <a href="{{ url_for('view_ticket', ticket_id=ticket.id) }}" class="btn btn-secondary mt-3">Back to Ticket</a>
 </div>
